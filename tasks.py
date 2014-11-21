@@ -1,13 +1,16 @@
 
 from celery import task
 import operator
-from intercom import User
 
-import data_tracker.conf as conf
+import datatracker.conf as conf
 
 if conf.MIXPANEL_FORWARD:
     import mixpanel
     mp = mixpanel.Mixpanel(conf.MIXPANEL_TOKEN)
+
+if conf.INTERCOM_FORWARD:
+    from intercom import User
+
 
 @task
 def mp_people_set(user, properties):
@@ -56,43 +59,6 @@ def _aggregate_events_by(property, events, sortby=1, reverse=True):
 
 
 
-
-
-@task
-def generate_report():
-    import acasa.models as acasa_model
-    import data_tracker.models as dt_model
-    from haystack.query import SearchQuerySet
-    from acasa.events import events
-
-
-    # User by:
-    ### Recent activity
-    _render_user_report(SearchQuerySet().models(acasa_model.User).all().order_by('-events', '-level', '-completion', 'nb_listings'), 'users_by_activity')
-
-    ### Level
-    _render_user_report(SearchQuerySet().models(acasa_model.User).all().order_by('-level', '-completion', '-events',  'nb_listings'), 'users_by_level')
-
-    ### Profile completion
-    _render_user_report(SearchQuerySet().models(acasa_model.User).all().order_by('-completion', '-level', '-events', 'nb_listings'), 'users_by_completion')
-
-
-    ### Profile visited
-
-    # City by:
-    ### Search
-    _render_city_report(_aggregate_events_by('location', dt_model.Event.objects.filter(name=events.ON_LISTING_SEARCH)), 'city_by_search')
-
-    ### Visit
-    _render_city_report(_aggregate_events_by('City', dt_model.Event.objects.filter(name=events.ON_LISTING_VISITED)), 'city_by_visit')
-
-    ### Booking request
-    _render_city_report(_aggregate_events_by('City', dt_model.Event.objects.filter(name=events.ON_BOOKING_REQUESTED)), 'city_by_request')
-
-    # Listing by
-    ### Visit
-    ### Booking request
-    ### Match
 
 @task
 def intercom_track(user, name, properties = None):

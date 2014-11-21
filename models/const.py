@@ -2,4 +2,4 @@
 
 __author__ = 'sebastienclaeys'
 
-APP_NAME = 'data_tracker'
+APP_NAME = 'datatracker'

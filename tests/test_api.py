@@ -1,17 +1,16 @@
 __author__ = 'sebastienclaeys'
 
 import common.tests as test_helper
-import data_tracker.models as model
+import datatracker.models as model
 
 class TrackTestCase(test_helper.LoggedInTestCase):
     def test_details(self):
-        import data_tracker.api as api
+        import datatracker.api as api
         import time
 
         event_name = "Test event #%d" % int(time.time())
         group_name = "Test group"
         properties = {'test_property': 'test_value'}
-
 
         # Deleting all existing events for the test group
         qs = model.Event.objects.filter(group=group_name)

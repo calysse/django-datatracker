@@ -1,8 +1,8 @@
 __author__ = 'sebastienclaeys'
 
-import data_tracker.models as model
-import data_tracker.conf as conf
-import data_tracker.tasks as task_queue
+import datatracker.models as model
+import datatracker.conf as conf
+import datatracker.tasks as task_queue
 
 
 def track(user, name, properties={}, group=None):

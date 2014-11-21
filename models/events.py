@@ -4,9 +4,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from const import APP_NAME
 import common.fields.dictionary as dictionary_field
-from data_tracker.models import const
 
-from django.conf import settings as conf
 from datetime import datetime
 
 class EventManager(models.Manager):
@@ -20,10 +18,6 @@ class EventManager(models.Manager):
 
 
 class Event(models.Model):
-    # def __init__(self, *args, **kwargs):
-    #     super(Event, self).__init__(*args, **kwargs)
-    #     self.__dict__.update(self.properties)
-
     name = models.CharField(max_length=64, db_index=True)
     group = models.CharField(max_length=64, db_index=True, blank=True)
     user = models.ForeignKey(User, blank=True, null=True, default=None, db_index=True)
