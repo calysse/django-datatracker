@@ -2,13 +2,21 @@
 __pycache__/
 *.py[cod]
 
+# CUSTOM
+.DS_Store
+virtualenv/
+.sass-cache/
+.idea/
+
 # C extensions
 *.so
 
 # Distribution / packaging
 .Python
 env/
+dropbox
 build/
+dkbr/settings.py
 develop-eggs/
 dist/
 downloads/
@@ -21,6 +29,9 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+bin/
+include/
+local/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
