@@ -1,6 +1,7 @@
 
 from celery import task
 import operator
+import time
 
 import datatracker.conf as conf
 
@@ -33,7 +34,11 @@ def intercom_track(user, name, properties = None):
     if properties is None:
         properties = {}
 
-    from intercom import Event
-    # User.create(user_id=user.id)
-    Event.create(event_name=name, email=user.email, metadata=properties)
+    intercom = conf.intercom_client
+    intercom.events.create(event_name=name, email=user.email, metadata=properties, created_at=int(time.time()))
 
+
+@task
+def intercom_update_company(company_id, name, plan, custom_attributes):
+    intercom = conf.intercom_client
+    intercom.companies.create(company_id=company_id, name=name, plan=plan, custom_attributes=custom_attributes)

@@ -6,11 +6,12 @@ DT_LOCAL_SAVE = getattr(settings, 'DT_LOCAL_SAVE', False)
 
 DT_MIXPANEL_TOKEN = getattr(settings, 'DT_MIXPANEL_TOKEN', False)
 
-DT_INTERCOM_APP_ID = "eiildktn"
-DT_INTERCOM_API_KEY = "0186775356d7f3b7e27cac57009ada5326f49c84"
-
 if DT_INTERCOM_FORWARD:
-    from intercom import Intercom
-    Intercom.app_id = DT_INTERCOM_APP_ID
-    Intercom.api_key = DT_INTERCOM_API_KEY
+    DT_INTERCOM_APPID = getattr(settings, 'DT_INTERCOM_APPID')
+    DT_INTERCOM_TOKEN = getattr(settings, 'DT_INTERCOM_TOKEN')
+
+    from intercom.client import Client
+    intercom_client = Client(personal_access_token=DT_INTERCOM_TOKEN)
+    # Intercom.app_id = DT_INTERCOM_APPID
+    # Intercom.api_key = DT_INTERCOM_TOKEN  # Deprecated intercom client
 
