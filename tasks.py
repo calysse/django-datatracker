@@ -42,3 +42,8 @@ def intercom_track(user, name, properties = None):
 def intercom_update_company(company_id, name, plan, custom_attributes):
     intercom = conf.intercom_client
     intercom.companies.create(company_id=company_id, name=name, plan=plan, custom_attributes=custom_attributes)
+
+@task
+def intercom_update_user(user_id, name, email, phone, signed_up_at, custom_attributes, companies):
+    intercom = conf.intercom_client
+    intercom.users.create(user_id=user_id, name=name, email=email, phone=phone, signed_up_at=signed_up_at, custom_attributes=custom_attributes, companies=companies)
