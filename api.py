@@ -15,3 +15,6 @@ def track(user, name, properties, group=None):
 def people_set(user, properties):
     if conf.DT_MIXPANEL_FORWARD:
         task_queue.mp_people_set.delay(user, properties)
+
+def get_intercom_client():
+    return conf.intercom_client
