@@ -2,7 +2,7 @@ from django.conf import settings
 
 DT_MIXPANEL_FORWARD = getattr(settings, 'DT_MIXPANEL_FORWARD', False)
 DT_INTERCOM_FORWARD = getattr(settings, 'DT_INTERCOM_FORWARD', False)
-DT_LOCAL_SAVE = getattr(settings, 'DT_LOCAL_SAVE', False)
+DT_LOCAL_SAVE = getattr(settings, 'DT_LOCAL_SAVE', True)
 
 DT_MIXPANEL_TOKEN = getattr(settings, 'DT_MIXPANEL_TOKEN', False)
 
