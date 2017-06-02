@@ -74,7 +74,7 @@ class EventManager(models.Manager):
 
 class Event(models.Model):
     name = models.CharField(max_length=64)
-    group = models.CharField(max_length=64, blank=True)
+    group = models.CharField(max_length=64, blank=True, null=True, default=None)
     user = models.IntegerField(blank=True, null=True, default=None)
     company = models.IntegerField(blank=True, null=True, default=None)
     properties = dictionary_field.DictionaryField(default=None, null=True, blank=True)
