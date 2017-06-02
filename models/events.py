@@ -78,7 +78,7 @@ class Event(models.Model):
     user = models.IntegerField(blank=True, null=True, default=None)
     company = models.IntegerField(blank=True, null=True, default=None)
     properties = dictionary_field.DictionaryField(default=None, null=True, blank=True)
-    datetime = models.DateTimeField(auto_now_add=True)
+    datetime = models.DateTimeField(default=datetime.now)
 
     objects = EventManager()
 
