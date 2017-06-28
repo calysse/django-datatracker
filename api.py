@@ -10,7 +10,11 @@ def track(user, name, properties, group=None, company=None, datetime=None):
     if conf.DT_MIXPANEL_FORWARD:
         task_queue.mp_track.delay(user, name, properties)
     if conf.DT_INTERCOM_FORWARD:
-        task_queue.intercom_track.delay(user, name, properties)
+        if conf.DEBUG:
+            # task_queue.intercom_track(user, name, properties)
+            pass
+        else:
+            task_queue.intercom_track.delay(user, name, properties)
 
 
 def batch_track(events):
