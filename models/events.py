@@ -3,7 +3,7 @@ __author__ = 'sebastienclaeys'
 from django.db import models
 from django.contrib.auth.models import User
 from const import APP_NAME
-import common.fields.dictionary as dictionary_field
+from common.fields.dictionary import DictionaryField
 
 from datetime import datetime
 
@@ -78,7 +78,7 @@ class Event(models.Model):
     group = models.CharField(max_length=64, blank=True, null=True, default=None)
     user = models.IntegerField(blank=True, null=True, default=None)
     company = models.IntegerField(blank=True, null=True, default=None)
-    properties = JSONField(default=None, null=True, blank=True)
+    properties = DictionaryField(default=None, null=True, blank=True)
     datetime = models.DateTimeField(default=datetime.now)
 
     objects = EventManager()
