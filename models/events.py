@@ -71,13 +71,14 @@ class EventManager(models.Manager):
         return count
 
 
+from jsonfield import JSONField
 
 class Event(models.Model):
     name = models.CharField(max_length=64)
     group = models.CharField(max_length=64, blank=True, null=True, default=None)
     user = models.IntegerField(blank=True, null=True, default=None)
     company = models.IntegerField(blank=True, null=True, default=None)
-    properties = dictionary_field.DictionaryField(default=None, null=True, blank=True)
+    properties = JSONField(default=None, null=True, blank=True)
     datetime = models.DateTimeField(default=datetime.now)
 
     objects = EventManager()
