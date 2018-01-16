@@ -35,7 +35,7 @@ def intercom_track(user, name, properties = None):
         properties = {}
 
     intercom = conf.intercom_client
-    intercom.events.create(event_name=name, email=user.email, metadata=properties, created_at=int(time.time()))
+    intercom.events.create(event_name=name, user_id=user.id, metadata=properties, created_at=int(time.time()))
 
 
 @task
