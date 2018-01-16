@@ -35,7 +35,10 @@ def intercom_track(user, name, properties = None):
         properties = {}
 
     intercom = conf.intercom_client
-    intercom.events.create(event_name=name, user_id=user.id, metadata=properties, created_at=int(time.time()))
+    try:
+        intercom.events.create(event_name=name, user_id=user.id, metadata=properties, created_at=int(time.time()))
+    except:
+        pass
 
 
 @task
