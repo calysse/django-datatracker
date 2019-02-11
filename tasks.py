@@ -1,5 +1,5 @@
 
-from celery import task
+from celery import shared_task as task
 import operator
 import time
 
