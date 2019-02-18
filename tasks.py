@@ -1,5 +1,5 @@
 
-from celery import shared_task as task
+from django_rq import job as task
 import operator
 import time
 
