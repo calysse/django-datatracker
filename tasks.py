@@ -50,7 +50,19 @@ def intercom_update_company(company_id, name, plan, custom_attributes, monthly_s
 @task
 def intercom_update_user(user_id, name, email, phone, signed_up_at, custom_attributes, companies):
     intercom = conf.intercom_client
-    intercom.users.create(user_id=user_id, name=name, email=email, phone=phone, signed_up_at=signed_up_at, custom_attributes=custom_attributes, companies=companies)
+    if companies is None:
+        intercom.users.create(user_id=user_id, name=name, email=email, phone=phone, signed_up_at=signed_up_at,
+                              custom_attributes=custom_attributes)
+    else:
+        intercom.users.create(user_id=user_id, name=name, email=email, phone=phone, signed_up_at=signed_up_at,
+                              custom_attributes=custom_attributes, companies=companies)
+
+
+@task
+def intercom_update_user_custom_attributes(user_id, custom_attributes):
+    intercom = conf.intercom_client
+    intercom.users.create(user_id=user_id, custom_attributes=custom_attributes)
+
 
 
 @task
