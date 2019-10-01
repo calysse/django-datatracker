@@ -75,7 +75,7 @@ from jsonfield import JSONField
 
 class Event(models.Model):
     name = models.CharField(max_length=64)
-    group = models.CharField(max_length=64, blank=True, null=True, default=None)
+    group = models.CharField(max_length=64, blank=True, null=True, default=None, db_index=True)
     user = models.IntegerField(blank=True, null=True, default=None)
     company = models.IntegerField(blank=True, null=True, default=None)
     properties = DictionaryField(default=None, null=True, blank=True)
