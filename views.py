@@ -1,10 +1,12 @@
+from __future__ import print_function, generators, division, unicode_literals, absolute_import
+
 from rest_framework.decorators import api_view
 import datatracker.models as model
 from django.http import HttpResponse
 from django.db.models import Count
 from datetime import date, datetime, timedelta
 import operator
-import data
+import datatracker.data as data
 
 import datatracker.conf as conf
 
@@ -32,7 +34,7 @@ def stats(request, func):
 
 
 
-def _get_metric(metric, start, end, agg_by):
+def _get_metric(metric, start, end, agg_by, last=False):
     override_name = None
     mtuple = metric.split(',')
     if len(mtuple) == 5:
@@ -41,8 +43,8 @@ def _get_metric(metric, start, end, agg_by):
         group, name, filter_by, count = mtuple
     if len(filter_by):
         filter_by = {x[0]: x[1] for x in map(lambda y: y.split(':'), filter_by.split(';'))}
-        print "Filtering by: " + str(filter_by)
-    return data.get_events(name, group, start, end, filter_by_properties=filter_by, aggregate_by=agg_by, count_by_property=count if len(count) else None, override_name=override_name).items()
+        print("Filtering by: " + str(filter_by))
+    return data.get_events(name, group, start, end, filter_by_properties=filter_by, aggregate_by=agg_by, count_by_property=count if len(count) else None, override_name=override_name, last=last).items()
 
 
 # Pivot metrics matrix
@@ -176,7 +178,7 @@ def prevision(request):
     return _csv_response(result)
 
 
-# Example: data/event?start=20140901&end=20141010&agg_by=date&sort_by=-0&&metric=Acquisition,Invite sent,City:Paris,Nb invite&formula=Acquisition,Member aquired
+# Example: /datatrack/gevents?start=20140901&end=20141010&agg_by=date&sort_by=-0&&metric=Acquisition,Invite sent,City:Paris,Nb invite&formula=Acquisition,Member aquired
 
 def events_gen(request):
     agg_by = request.GET.get('agg_by', None)
@@ -184,21 +186,29 @@ def events_gen(request):
     start = request.GET.get('start')
     end = request.GET.get('end')
     sum = request.GET.get('sum', False)
+    last = request.GET.get('last', False) == 'True'
 
     metrics = []
     formulas = []
     for metric in request.GET.getlist('metric', []):
-        metrics.extend(_get_metric(metric, start, end, agg_by))
+        metrics.extend(_get_metric(metric, start, end, agg_by, last=last))
     for metric in request.GET.getlist('formula', []):
-        formulas.extend(_get_metric(metric, start, end, agg_by))
+        formulas.extend(_get_metric(metric, start, end, agg_by, last=last))
 
-    print metrics
+    print(metrics)
 
     # Generete the final data
     if 'reversed' in request.GET:
         # if reversed data is requested, only valid for one metric
         res = [map(operator.itemgetter(0), metrics[0][1].items()),
                map(operator.itemgetter(1), metrics[0][1].items())]
+    elif 'normal' in request.GET:
+        res = [
+            [m[0] for m in metrics],
+            [m[1].values()[0] for m in metrics],
+        ]
+
+        print(res)
     else:
         # build metric list
         mnames = []
@@ -212,15 +222,14 @@ def events_gen(request):
 
         res.extend(_pivot_metrics(metrics, formulas, sort_by))
 
-
-    if sum == 'True':
-        for i in range(len(mnames)):
-            sum = 0
-            for y in range(len(res)):
-                if len(res[y]) > i+1:
-                    if type(res[y][i+1]) in [float, int]:
-                        sum += res[y][i+1]
-                        res[y][i+1] = sum
+        if sum == 'True':
+            for i in range(len(mnames)):
+                sum = 0
+                for y in range(len(res)):
+                    if len(res[y]) > i + 1:
+                        if type(res[y][i + 1]) in [float, int]:
+                            sum += res[y][i + 1]
+                            res[y][i + 1] = sum
 
 
     _add_custom_cyfe_parameters(request.GET, res)

@@ -104,7 +104,7 @@ def cohorts(main_metric, trigger_metric, granularity='week', nb_items=12):
 # aggregate_by_properties = 'property_name'. e.g. 'City', will aggregate the result by 'City' instead of by date (default)
 # count_by_property = 'property name', e.g. 'Nb sent', will aggregate the value of the property Nb send instead if just counting the nuber of event (default)
 #
-def get_events(name, group, start=None, end=None, filter_by_properties=None, aggregate_by=None, count_by_property=None, override_name=None):
+def get_events(name, group, start=None, end=None, filter_by_properties=None, aggregate_by=None, count_by_property=None, override_name=None, last=False):
     EventModel = dt_model.Event
 
     if start is not None and end is not None:
@@ -121,6 +121,8 @@ def get_events(name, group, start=None, end=None, filter_by_properties=None, agg
     if len(name) and name != '*':
          events = events.filter(name=name)
 
+    if last:
+        events = [events.last()] if events else []
 
     res = {}
     for event in events:
