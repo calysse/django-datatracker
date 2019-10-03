@@ -122,7 +122,7 @@ def get_events(name, group, start=None, end=None, filter_by_properties=None, agg
          events = events.filter(name=name)
 
     if last:
-        events = [events.last()] if events else []
+        events = [events.first()] if events else []
 
     res = {}
     for event in events:
