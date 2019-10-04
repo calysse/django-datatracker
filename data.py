@@ -1,3 +1,5 @@
+from __future__ import print_function, generators, division, unicode_literals, absolute_import
+
 __author__ = 'sebastienclaeys'
 
 #####################
@@ -99,7 +101,7 @@ def cohorts(main_metric, trigger_metric, granularity='week', nb_items=12):
 #
 # name=name of the event, e.g. 'Member acquired'
 # group=group of event, e.g. 'Member activity'
-# start, end = YYYYMMDD = date range in which we aggregate the events
+# start, end = YYYYMMDD = date range in whic we aggregate the events
 # filter_by_properties = {}. e.g. {'City': 'Paris'} will take only events where 'City' = 'Paris' is in the property dict
 # aggregate_by_properties = 'property_name'. e.g. 'City', will aggregate the result by 'City' instead of by date (default)
 # count_by_property = 'property name', e.g. 'Nb sent', will aggregate the value of the property Nb send instead if just counting the nuber of event (default)
@@ -192,7 +194,7 @@ def scan_metric(group, name, filter_by, count, offset):
     inc = past_week_total - past_past_week_total
     growth = inc * 1.0 / past_past_week_total
 
-    print past_week_total, past_past_week_total, base, inc, growth
+    print(past_week_total, past_past_week_total, base, inc, growth)
 
     return base + offset, past_week_total, growth
 

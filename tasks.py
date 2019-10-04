@@ -1,3 +1,4 @@
+from __future__ import print_function, generators, division, unicode_literals, absolute_import
 
 from django_rq import job as task
 import operator

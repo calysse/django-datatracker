@@ -1,3 +1,5 @@
+from __future__ import print_function, generators, division, unicode_literals, absolute_import
+
 from django.conf import settings
 
 DT_MIXPANEL_FORWARD = getattr(settings, 'DT_MIXPANEL_FORWARD', False)

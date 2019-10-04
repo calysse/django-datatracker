@@ -1,8 +1,10 @@
+from __future__ import print_function, generators, division, unicode_literals, absolute_import
+
 __author__ = 'sebastienclaeys'
 
 from django.db import models
 from django.contrib.auth.models import User
-from const import APP_NAME
+from datatracker.models.const import APP_NAME
 from common.fields.dictionary import DictionaryField
 
 from datetime import datetime
@@ -50,7 +52,7 @@ class EventManager(models.Manager):
         qs = self.all()
 
         if group is None and name is None and user is None and company is None:
-            print "Need at least one filter."  # Protection to prevent all event deletion
+            print("Need at least one filter.")  # Protection to prevent all event deletion
             return 0
 
         if group:
