@@ -1,17 +1,11 @@
-from __future__ import print_function, generators, division, unicode_literals, absolute_import
-
-from rest_framework.decorators import api_view
-import datatracker.models as model
 from django.http import HttpResponse
-from django.db.models import Count
 from datetime import date, datetime, timedelta
 import operator
 import datatracker.data as data
 
-import datatracker.conf as conf
 
 def _csv_response(matrix):
-    res = map(lambda x: ','.join(map(unicode, x)), matrix)
+    res = map(lambda x: ','.join(map(str, x)), matrix)
     response = HttpResponse(content_type='plain/text')
     response.write("\n".join(res))
     return response
@@ -180,6 +174,15 @@ def prevision(request):
 
 # Example: /datatrack/gevents?start=20140901&end=20141010&agg_by=date&sort_by=-0&&metric=Acquisition,Invite sent,City:Paris,Nb invite&formula=Acquisition,Member aquired
 
+
+# https://ipaidthat.io/datatrack/gevents?
+# metric=gen_orgs,org_signup,is_license:False%3Bis_paid:True%3Bsource:Ads,,Conversions
+# &formula=gen_orgs,org_signup,is_license:False%3Bsource:Ads,,Signups
+# &metric=gen_orgs,org_signup,is_license:False%3Bsource:Ads,,Signups
+# &metric=gen_orgs,org_signup,is_license:False%3Bis_paid:True%3Bsource:Ads,,Conversions
+# &Cy_Type=line,column,column
+
+
 def events_gen(request):
     agg_by = request.GET.get('agg_by', None)
     sort_by = request.GET.get('sort_by', '0')
@@ -195,8 +198,6 @@ def events_gen(request):
     for metric in request.GET.getlist('formula', []):
         formulas.extend(_get_metric(metric, start, end, agg_by, last=last))
 
-    print(metrics)
-
     # Generete the final data
     if 'reversed' in request.GET:
         # if reversed data is requested, only valid for one metric
@@ -208,7 +209,6 @@ def events_gen(request):
             [m[1].values()[0] for m in metrics],
         ]
 
-        print(res)
     else:
         # build metric list
         mnames = []

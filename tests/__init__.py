@@ -1,4 +1,4 @@
 __author__ = 'sebastienclaeys'
 
-from test_api import *
+from .test_api import *
 

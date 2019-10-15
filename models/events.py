@@ -1,9 +1,7 @@
-from __future__ import print_function, generators, division, unicode_literals, absolute_import
 
 __author__ = 'sebastienclaeys'
 
 from django.db import models
-from django.contrib.auth.models import User
 from datatracker.models.const import APP_NAME
 from common.fields.dictionary import DictionaryField
 
@@ -72,8 +70,6 @@ class EventManager(models.Manager):
 
         return count
 
-
-from jsonfield import JSONField
 
 class Event(models.Model):
     name = models.CharField(max_length=64)

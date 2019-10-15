@@ -1,4 +1,3 @@
-from __future__ import print_function, generators, division, unicode_literals, absolute_import
 
 __author__ = 'sebastienclaeys'
 
@@ -7,7 +6,7 @@ __author__ = 'sebastienclaeys'
 #####################
 import datatracker.models as dt_model
 from datetime import datetime, timedelta, date
-
+from functools import reduce
 
 DATA_FUNC = {}
 
@@ -110,8 +109,8 @@ def get_events(name, group, start=None, end=None, filter_by_properties=None, agg
     EventModel = dt_model.Event
 
     if start is not None and end is not None:
-        dstart = datetime.strptime(start, '%Y%m%d') if type(start) in [str, unicode] else start
-        dend = (datetime.strptime(end, '%Y%m%d') if type(end) in [str, unicode] else end) + timedelta(1)
+        dstart = datetime.strptime(start, '%Y%m%d') if type(start) in [str, bytes] else start
+        dend = (datetime.strptime(end, '%Y%m%d') if type(end) in [str, bytes] else end) + timedelta(1)
         #events = dt_model.Event.objects.filter(datetime__range=[dstart, dend]).order_by('-datetime')
         events = EventModel.objects.filter(datetime__gt=dstart, datetime__lt=dend).order_by('-datetime')
     else:
