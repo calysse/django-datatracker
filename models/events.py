@@ -81,7 +81,7 @@ class Event(models.Model):
 
     objects = EventManager()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
