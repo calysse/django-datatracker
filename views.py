@@ -5,7 +5,7 @@ import datatracker.data as data
 
 
 def _csv_response(matrix):
-    res = map(lambda x: ','.join(map(str, x)), matrix)
+    res = list(map(lambda x: ','.join(map(str, x)), matrix))
     response = HttpResponse(content_type='plain/text')
     response.write("\n".join(res))
     return response
