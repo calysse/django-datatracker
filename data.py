@@ -141,8 +141,14 @@ def get_events(name, group, start=None, end=None, filter_by_properties=None, agg
             for key, val in filter_by_properties.items():
                 if not key in event.properties:
                     passe = False
-                elif val != '*' and str(event.properties[key]) != val:
-                    passe = False
+                elif val != '*':
+                    if val[0] == '-':
+                        if str(event.properties[key]) == val[1:]:  # a value can have a minus prefix which means we want to exclude instead of filter it.
+                            passe = False
+                    else:
+                        if str(event.properties[key]) != val:
+                            passe = False
+
                 elif val == '*':
                     cat_key = cat_key + ' %s' % event.properties[key]
             if not passe:
