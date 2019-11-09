@@ -72,7 +72,7 @@ def _pivot_metrics(metrics, formulas, sortby="0"):
             else:
                 res[key].append(metric[key])
 
-    return sorted(map(lambda x: [x[0]] + x[1], res.items()), key=operator.itemgetter(int(sortby)), reverse=(sortby[0] == '-'))
+    return sorted(list(map(lambda x: [x[0]] + x[1], res.items())), key=operator.itemgetter(int(sortby)), reverse=(sortby[0] == '-'))
 
 
 #
@@ -121,7 +121,7 @@ def compare_weeks(request):
                 res[key] = []
             res[key].append(val)
 
-    result.extend(sorted(map(lambda x: [x[0]] + x[1], res.items()), key=operator.itemgetter(0)))
+    result.extend(sorted(list(map(lambda x: [x[0]] + x[1], res.items())), key=operator.itemgetter(0)))
 
     if sum == 'True':
         for i in range(len(metrics)):
@@ -167,7 +167,7 @@ def prevision(request):
             base = base + inc
             edate = edate + week
 
-    result.extend(sorted(map(lambda x: [x[0]] + x[1], res.items()), key=operator.itemgetter(0)))
+    result.extend(sorted(list(map(lambda x: [x[0]] + x[1], res.items())), key=operator.itemgetter(0)))
     _add_custom_cyfe_parameters(request.GET, result)
     return _csv_response(result)
 
@@ -201,12 +201,12 @@ def events_gen(request):
     # Generete the final data
     if 'reversed' in request.GET:
         # if reversed data is requested, only valid for one metric
-        res = [map(operator.itemgetter(0), metrics[0][1].items()),
-               map(operator.itemgetter(1), metrics[0][1].items())]
+        res = [list(map(operator.itemgetter(0), metrics[0][1].items())),
+               list(map(operator.itemgetter(1), metrics[0][1].items()))]
     elif 'normal' in request.GET:
         res = [
             [m[0] for m in metrics],
-            [m[1].values()[0] for m in metrics],
+            [list(m[1].values())[0] for m in metrics],
         ]
 
     else:

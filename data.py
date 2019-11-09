@@ -189,9 +189,9 @@ def scan_metric(group, name, filter_by, count, offset):
     past_past_monday = past_monday - timedelta(weeks=1)
 
 
-    past_week = get_events(name, group, past_monday, past_monday + timedelta(6), filter_by_properties=filter_by, count_by_property=count if len(count) else None).values()[0]
-    past_past_week = get_events(name, group, past_past_monday, past_past_monday + timedelta(6), filter_by_properties=filter_by, count_by_property=count if len(count) else None).values()[0]
-    total = get_events(name, group, None, None, filter_by_properties=filter_by, count_by_property=count if len(count) else None).values()[0]
+    past_week = list(get_events(name, group, past_monday, past_monday + timedelta(6), filter_by_properties=filter_by, count_by_property=count if len(count) else None).values())[0]
+    past_past_week = list(get_events(name, group, past_past_monday, past_past_monday + timedelta(6), filter_by_properties=filter_by, count_by_property=count if len(count) else None).values())[0]
+    total = list(get_events(name, group, None, None, filter_by_properties=filter_by, count_by_property=count if len(count) else None).values())[0]
 
     past_week_total = reduce(lambda x,y: x+y, past_week.values(), 0)
     past_past_week_total = reduce(lambda x,y: x+y, past_past_week.values(), 0)
