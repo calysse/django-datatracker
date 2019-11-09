@@ -106,8 +106,8 @@ def compare_weeks(request):
     monday = monday.strftime("%Y%m%d")
     today = today.strftime("%Y%m%d")
 
-    metrics.extend([data.get_events(name, group, past_monday, past_sunday, filter_by_properties=filter_by, aggregate_by=None, count_by_property=count if len(count) else None).values()[0],
-                    data.get_events(name, group, monday, today, filter_by_properties=filter_by, aggregate_by=None, count_by_property=count if len(count) else None).values()[0]
+    metrics.extend([list(data.get_events(name, group, past_monday, past_sunday, filter_by_properties=filter_by, aggregate_by=None, count_by_property=count if len(count) else None).values())[0],
+                    list(data.get_events(name, group, monday, today, filter_by_properties=filter_by, aggregate_by=None, count_by_property=count if len(count) else None).values())[0]
                     ])
 
     result = [["Day of week", "Past week", "Current week"]]
