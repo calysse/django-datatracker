@@ -11,6 +11,7 @@ virtualenv/
 # C extensions
 *.so
 
+migrations/
 # Distribution / packaging
 .Python
 env/
