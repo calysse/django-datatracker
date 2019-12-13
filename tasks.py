@@ -41,9 +41,50 @@ def intercom_track(user, name, properties = None):
 
 
 @task
-def intercom_update_company(company_id, name, plan, custom_attributes, monthly_spend=0):
+def intercom_update_company(company_id):
+    from ipt.models import Organisation
+
+    instance = Organisation.objects.get(pk=int(company_id))
+
+    custom_attributes = {'is_gmail_connected': instance.is_gmail_connected,
+                         'is_outlook_connected': instance.is_outlook_connected,
+                         'is_email_bot_connected': instance.is_outlook_connected or instance.is_gmail_connected or instance.is_imap_connected,
+                         'is_slack_connected': instance.is_slack_connected,
+                         'is_gmail_active': instance.is_gmail_active,
+                         'accountant_invited': instance.accountant_invited,
+                         'country': instance.country,
+                         'has_card': instance.has_card,
+                         'is_real_churn': instance.is_real_churn,
+                         'is_trial_churn': instance.is_trial_churn,
+                         'is_referral': instance.is_referral(),
+                         'invoice_created': instance.invoice_created,
+                         'phone': instance.phone,
+                         'utm_medium': instance.utm_medium,
+                         'utm_source': instance.utm_source,
+                         'utm_campaign': instance.utm_campaign,
+                         'utm_content': instance.utm_content,
+                         'http_referrer': instance.http_referrer,
+                         'ref_leads': instance.ref_leads,
+                         'refered_orgs': instance.referred_orgs.all().count(),
+                         'currency': instance.currency.name,
+                         'nb_members': instance.members.all().count(),
+                         'nb_collectors': instance.collectorinstance_set.count(),
+                         'nb_invoices': instance.inv_invoice.count(),
+                         'nb_expense_users': instance.expenseuser_set.count(),
+                         'firm': u"#{} {}".format(instance.firm.id,
+                                                  instance.firm.name) if instance.firm else "",
+                         'nb_siblings': instance.firm.organisation_set.count() if instance.firm else 0,
+                         'website': instance.website,
+                         'is_bankin_connected': instance.is_bankin_connected(),
+                         'signup_step': instance.signup_step,
+                         'last_dashboard': int(time.mktime(instance.last_dashboard.timetuple())),
+                         'mobile_scanner_link_sent': instance.mobile_scanner_link_sent,
+                         'last_mobile_use': int(time.mktime(instance.last_mobile_use.timetuple()))
+                         }
+
     intercom = conf.intercom_client
-    intercom.companies.create(company_id=company_id, name=name, plan=plan, custom_attributes=custom_attributes, monthly_spend=monthly_spend)
+
+    intercom.companies.create(company_id=str(company_id), name=instance.name, plan=instance.get_plan(), custom_attributes=custom_attributes, monthly_spend=instance.monthly_spend)
 
 
 @task
