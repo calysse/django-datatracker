@@ -112,7 +112,7 @@ def get_events(name, group, start=None, end=None, filter_by_properties=None, agg
         dstart = datetime.strptime(start, '%Y%m%d') if type(start) in [str, bytes] else start
         dend = (datetime.strptime(end, '%Y%m%d') if type(end) in [str, bytes] else end) + timedelta(1)
         #events = dt_model.Event.objects.filter(datetime__range=[dstart, dend]).order_by('-datetime')
-        events = EventModel.objects.filter(datetime__gt=dstart, datetime__lt=dend).order_by('-datetime')
+        events = EventModel.objects.filter(datetime__gte=dstart, datetime__lte=dend).order_by('-datetime')
     else:
         events = EventModel.objects.all().order_by('-datetime')
 
