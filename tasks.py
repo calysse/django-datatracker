@@ -66,6 +66,7 @@ def intercom_update_company(company_id):
                          'http_referrer': instance.http_referrer,
                          'ref_leads': instance.ref_leads,
                          'refered_orgs': instance.referred_orgs.all().count(),
+                         'affiliate': instance.get_afp_org(),
                          'currency': instance.currency.name,
                          'nb_members': instance.members.all().count(),
                          'nb_collectors': instance.collectorinstance_set.count(),
