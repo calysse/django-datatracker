@@ -80,7 +80,18 @@ def intercom_update_company(company_id):
                          'signup_step': instance.signup_step,
                          'last_dashboard': int(time.mktime(instance.last_dashboard.timetuple())),
                          'mobile_scanner_link_sent': instance.mobile_scanner_link_sent,
-                         'last_mobile_use': int(time.mktime(instance.last_mobile_use.timetuple()))
+                         'last_mobile_use': int(time.mktime(instance.last_mobile_use.timetuple())),
+
+                         # Stat data
+                         'heard_from': str(instance.heard_from),
+                         'nb_employees': str(instance.nb_employees),
+                         'yearly_revenue': str(instance.yearly_revenue),
+                         'company_legal_name': instance.company_legal_name,
+                         'company_legal_type': instance.company_legal_type,
+                         'headquarter_city': instance.headquarter_city,
+                         'headquarter_zipcode': instance.headquarter_zipcode,
+                         'headquarter_address': instance.headquarter_address,
+                         'main_activity': instance.main_activity
                          }
 
     intercom = conf.intercom_client
