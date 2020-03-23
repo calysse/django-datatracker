@@ -1,9 +1,8 @@
-
 from django_rq import job as task
 import time
-
+import logging
 import datatracker.conf as conf
-
+import traceback
 
 @task
 def mp_people_set(user, properties):
@@ -93,11 +92,20 @@ def intercom_update_company(company_id):
                          'headquarter_address': instance.headquarter_address,
                          'main_activity': instance.main_activity
                          }
-
     intercom = conf.intercom_client
-
-    intercom.companies.create(company_id=str(company_id), name=instance.name, plan=instance.get_plan(), custom_attributes=custom_attributes, monthly_spend=instance.monthly_spend)
-
+    tries = 3
+    for i in range(tries):
+        try:
+            intercom.companies.create(company_id=str(company_id), name=instance.name, plan=instance.get_plan(), custom_attributes=custom_attributes, monthly_spend=instance.monthly_spend)
+        except Exception as e:
+            if i < tries - 1:
+                time.sleep(60)
+                continue
+            else:
+                logger = logging.getLogger('graylog')
+                logger.error("intercom.companies.create failed: company_id:{}. Error message: {}.\n Traceback: {}".format(company_id, str(e), traceback.format_exc()))
+                raise
+        break
 
 @task
 def intercom_update_user(user_id, name, email, phone, signed_up_at, custom_attributes, companies):
