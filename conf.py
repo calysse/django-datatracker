@@ -13,7 +13,11 @@ if DT_INTERCOM_FORWARD:
     DT_INTERCOM_APPID = getattr(settings, 'DT_INTERCOM_APPID')
     DT_INTERCOM_TOKEN = getattr(settings, 'DT_INTERCOM_TOKEN')
 
+    from intercom.errors import HttpError
+    import intercom
+    intercom.HttpError = HttpError
     from intercom.client import Client
+
     intercom_client = Client(personal_access_token=DT_INTERCOM_TOKEN)
     # Intercom.app_id = DT_INTERCOM_APPID
     # Intercom.api_key = DT_INTERCOM_TOKEN  # Deprecated intercom client

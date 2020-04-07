@@ -39,6 +39,83 @@ def intercom_track(user, name, properties = None):
         pass
 
 
+def call_and_retry(function, *args, **kwargs):
+    tries = 3
+    for i in range(tries):
+        try:
+            function(*args, **kwargs)
+        except Exception as e:
+            if i < tries - 1:
+                time.sleep(60)
+                continue
+            else:
+                logger = logging.getLogger('graylog')
+                logger.error(
+                    "Intercom function '{}' failed with args: {} {}. Error message: {}.\n Traceback: {}".format(
+                        function.__name__,
+                        str(args),
+                        str(kwargs),
+                        str(e),
+                        traceback.format_exc()))
+                raise
+        break
+
+
+@task
+def intercom_update_firm(firm_id):
+    # Todo:  #}
+    # est un colab ? fait partie d'une firm #}
+    # colab admin ou restreint ?#}
+
+    # nombre de dossier atitré a ce colaborateur #}
+    # INvité par un client  ? #}
+    # Fait une demo request ? #}
+
+    # Score d'utilisation    #}
+
+    # [Seb] Avril 2020 Sync firm and Sub-firms data to Intercom
+    from ipt.models import Firm
+    from datetime import timedelta, datetime
+    instance = Firm.objects.get(pk=int(firm_id))
+
+    from datetime import date, timedelta
+    instance.set_date_range(date.today() - timedelta(90), date.today())
+
+    custom_attributes = {'is_paid_account': instance.is_paid_account,
+                         'nb_orgs': instance.nb_orgs,
+                         'nb_active_orgs': instance.get_nb_active_orgs(),
+                         'nb_collaborators': instance.profile_set.filter(is_staff=False).count(),
+                         'nb_licences': instance.licenses,
+                         'nb_used_licenses': instance.used_licenses,
+                         'nb_free_licenses': instance.free_licenses,
+                         'nb_available_licenses': instance.available_licenses,
+                         'new_org_within_30_days': instance.organisation_set.filter(created__gte=datetime.now()-timedelta(30)).count()
+                         }
+
+    custom_attributes['active_orgs_ratio'] = 0 if custom_attributes['nb_orgs'] == 0 else custom_attributes['nb_active_orgs'] * 100 // custom_attributes['nb_orgs']
+    intercom = conf.intercom_client
+
+    call_and_retry(intercom.companies.create,
+                   company_id="F{}".format(str(firm_id)),
+                   name="[FIRM] {}".format(instance.name),
+                   custom_attributes=custom_attributes)
+
+
+    owner_profile = instance.get_owner_profile()
+    if owner_profile:
+        owner = owner_profile.user
+
+        intercom_update_user(owner.id,
+                             "{} {}".format(owner.first_name, owner.last_name),
+                             owner.email,
+                             owner_profile.phone,
+                             int(time.mktime(owner.date_joined.timetuple())),
+                             {'is_firm_owner': True, 'is_accountant': True},
+                             [{'company_id': "F{}".format(instance.id),
+                               'name': "[FIRM] {}".format(instance.name)}])
+
+
+
 @task
 def intercom_update_company(company_id):
     from ipt.models import Organisation
@@ -66,7 +143,7 @@ def intercom_update_company(company_id):
                          'ref_leads': instance.ref_leads,
                          'refered_orgs': instance.referred_orgs.all().count(),
                          'affiliate': instance.get_afp_org(),
-                         'currency': instance.currency.name,
+                         'currency': instance.currency.name if instance.currency else "",
                          'nb_members': instance.members.all().count(),
                          'nb_collectors': instance.collectorinstance_set.count(),
                          'nb_invoices': instance.inv_invoice.count(),
@@ -93,19 +170,14 @@ def intercom_update_company(company_id):
                          'main_activity': instance.main_activity
                          }
     intercom = conf.intercom_client
-    tries = 3
-    for i in range(tries):
-        try:
-            intercom.companies.create(company_id=str(company_id), name=instance.name, plan=instance.get_plan(), custom_attributes=custom_attributes, monthly_spend=instance.monthly_spend)
-        except Exception as e:
-            if i < tries - 1:
-                time.sleep(60)
-                continue
-            else:
-                logger = logging.getLogger('graylog')
-                logger.error("intercom.companies.create failed: company_id:{}. Error message: {}.\n Traceback: {}".format(company_id, str(e), traceback.format_exc()))
-                raise
-        break
+
+    call_and_retry(intercom.companies.create,
+                   company_id=str(company_id),
+                   name=instance.name,
+                   plan=instance.get_plan(),
+                   custom_attributes=custom_attributes,
+                   monthly_spend=instance.monthly_spend)
+
 
 @task
 def intercom_update_user(user_id, name, email, phone, signed_up_at, custom_attributes, companies):
