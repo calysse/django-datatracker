@@ -84,7 +84,7 @@ def intercom_update_firm(firm_id):
     custom_attributes = {'is_paid_account': instance.is_paid_account,
                          'nb_orgs': instance.nb_orgs,
                          'nb_active_orgs': instance.get_nb_active_orgs(),
-                         'nb_collaborators': instance.profile_set.filter(is_staff=False).count(),
+                         'nb_collaborators': instance.profile_set.filter(user__is_staff=False).count(),
                          'nb_licences': instance.licenses,
                          'nb_used_licenses': instance.used_licenses,
                          'nb_free_licenses': instance.free_licenses,
