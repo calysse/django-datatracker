@@ -63,16 +63,6 @@ def call_and_retry(function, *args, **kwargs):
 
 @task
 def intercom_update_firm(firm_id):
-    # Todo:  #}
-    # est un colab ? fait partie d'une firm #}
-    # colab admin ou restreint ?#}
-
-    # nombre de dossier atitré a ce colaborateur #}
-    # INvité par un client  ? #}
-    # Fait une demo request ? #}
-
-    # Score d'utilisation    #}
-
     # [Seb] Avril 2020 Sync firm and Sub-firms data to Intercom
     from ipt.models import Firm
     from datetime import timedelta, datetime
@@ -89,6 +79,9 @@ def intercom_update_firm(firm_id):
                          'nb_used_licenses': instance.used_licenses,
                          'nb_free_licenses': instance.free_licenses,
                          'nb_available_licenses': instance.available_licenses,
+                         'last_amount_due': instance.get_last_amount_due(),
+                         'is_subfirm': instance.parent_firm is not None,
+                         'is_yooz': instance.yooz_email_forward,
                          'new_org_within_30_days': instance.organisation_set.filter(created__gte=datetime.now()-timedelta(30)).count()
                          }
 
