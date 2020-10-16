@@ -198,7 +198,15 @@ def intercom_update_lead(name, email, custom_attributes):
 
 @task
 def intercom_convert_lead(lead_id, user_id):
+    from intercom.errors import ResourceNotFound
     intercom = conf.intercom_client
-    intercom_user = intercom.users.find(user_id=user_id)
-    intercom_lead = intercom.leads.find(id=lead_id)
-    return intercom.leads.convert(intercom_lead, intercom_user)
+    try:
+        intercom_user = intercom.users.find(user_id=user_id)
+        intercom_lead = intercom.leads.find(id=lead_id)
+    except ResourceNotFound:
+        intercom_user = None
+        intercom_lead = None
+    if intercom_user and intercom_lead:
+        return intercom.leads.convert(intercom_lead, intercom_user)
+    else:
+        return None
