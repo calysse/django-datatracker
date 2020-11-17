@@ -160,10 +160,44 @@ def intercom_update_company(company_id):
                          'headquarter_city': instance.headquarter_city,
                          'headquarter_zipcode': instance.headquarter_zipcode,
                          'headquarter_address': instance.headquarter_address,
-                         'main_activity': instance.main_activity
-                         }
-    intercom = conf.intercom_client
+                         'main_activity': instance.main_activity,
 
+                         # Init treso flags
+                         'treso_trial_started': False,
+                         'treso_last_seen': "",
+                         'treso_30_days_sessions': 0,
+                         'treso_categorization_completion': 0,
+                         'treso_active_subscription': False,
+                         'treso_has_churned': False,
+                         'treso_plan': '',
+                         'treso_trial_days': 0,
+                         'treso_plan_monthly_value': 0,
+                         'treso_nb_scenarios': 0
+                         }
+
+    # Treso app data - if loaded
+
+    from treso.models import GlobalTresoSetting, Scenario, TresoWebSession
+    global_treso_setting = GlobalTresoSetting.objects.filter(organisation=instance).last()
+    last_seen = TresoWebSession.objects.last_seen(organisation=instance)
+
+    if global_treso_setting:
+        custom_attributes.update({'treso_trial_started': False,
+                                  'treso_first_seen': int(time.mktime(global_treso_setting.trial_period_start.timetuple())),
+                                  'treso_last_seen': int(time.mktime(last_seen.timetuple())) if last_seen else 0,
+                                  'treso_30_days_sessions': TresoWebSession.objects.get_thirty_days_websessions(instance),
+                                  'treso_7_days_sessions': TresoWebSession.objects.get_seven_days_websessions(instance),
+                                  'treso_categorization_completion': global_treso_setting.get_categorization_completion(),
+                                  'treso_active_subscription': global_treso_setting.treso_active_plan is not None,
+                                  'treso_trial_days': global_treso_setting.trial_days(),
+                                  'treso_has_churned': global_treso_setting.treso_has_churned,
+                                  'treso_plan': global_treso_setting.treso_active_plan.name if global_treso_setting.treso_active_plan else '',
+                                  'treso_plan_monthly_value': global_treso_setting.treso_active_plan.get_yearly_monthly_value() if global_treso_setting.treso_active_plan else 0,
+                                  'treso_nb_scenarios': Scenario.objects.filter(organisation=instance).count()
+                                  })
+
+    print(custom_attributes)
+    intercom = conf.intercom_client
     call_and_retry(intercom.companies.create,
                    company_id=str(company_id),
                    name=instance.name,
