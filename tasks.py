@@ -196,7 +196,6 @@ def intercom_update_company(company_id):
                                   'treso_nb_scenarios': Scenario.objects.filter(organisation=instance).count()
                                   })
 
-    print(custom_attributes)
     intercom = conf.intercom_client
     call_and_retry(intercom.companies.create,
                    company_id=str(company_id),
