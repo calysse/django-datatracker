@@ -181,7 +181,7 @@ def intercom_update_company(company_id):
     global_treso_setting = GlobalTresoSetting.objects.filter(organisation=instance).last()
     last_seen = TresoWebSession.objects.last_seen(organisation=instance)
 
-    if global_treso_setting:
+    if global_treso_setting and global_treso_setting.trial_period_start != None:
         custom_attributes.update({'treso_trial_started': True,
                                   'treso_first_seen': int(time.mktime(global_treso_setting.trial_period_start.timetuple())),
                                   'treso_last_seen': int(time.mktime(last_seen.timetuple())) if last_seen else 0,
