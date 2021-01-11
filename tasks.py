@@ -119,7 +119,7 @@ def intercom_update_company(company_id):
 
     custom_attributes = {'is_gmail_connected': instance.is_gmail_connected,
                          'is_outlook_connected': instance.is_outlook_connected,
-                         'is_email_bot_connected': instance.has_connect_email,
+                         'is_email_bot_connected': instance.has_connect_email(),
                          'is_slack_connected': instance.is_slack_connected,
                          'is_gmail_active': instance.is_gmail_active,
                          'accountant_invited': instance.accountant_invited,
