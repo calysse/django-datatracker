@@ -81,7 +81,9 @@ def intercom_update_firm(firm_id):
                          'nb_available_licenses': instance.available_licenses,
                          'last_amount_due': instance.get_last_amount_due(),
                          'is_subfirm': instance.parent_firm is not None,
-                         'is_yooz': instance.yooz_email_forward,
+                         'is_yooz': instance.parent_firm.yooz_email_forward,
+                         'is_yooz_expert': instance.edition == 'expert',
+                         'is_yooz_business': instance.edition == 'business',
                          'new_org_within_30_days': instance.organisation_set.filter(created__gte=datetime.now()-timedelta(30)).count()
                          }
 
@@ -117,7 +119,7 @@ def intercom_update_company(company_id):
 
     custom_attributes = {'is_gmail_connected': instance.is_gmail_connected,
                          'is_outlook_connected': instance.is_outlook_connected,
-                         'is_email_bot_connected': instance.is_outlook_connected or instance.is_gmail_connected or instance.is_imap_connected,
+                         'is_email_bot_connected': instance.has_connect_email,
                          'is_slack_connected': instance.is_slack_connected,
                          'is_gmail_active': instance.is_gmail_active,
                          'accountant_invited': instance.accountant_invited,
@@ -198,7 +200,15 @@ def intercom_update_lead(name, email, custom_attributes):
 
 @task
 def intercom_convert_lead(lead_id, user_id):
+    from intercom.errors import ResourceNotFound
     intercom = conf.intercom_client
-    intercom_user = intercom.users.find(user_id=user_id)
-    intercom_lead = intercom.leads.find(id=lead_id)
-    return intercom.leads.convert(intercom_lead, intercom_user)
+    try:
+        intercom_user = intercom.users.find(user_id=user_id)
+        intercom_lead = intercom.leads.find(id=lead_id)
+    except ResourceNotFound:
+        intercom_user = None
+        intercom_lead = None
+    if intercom_user and intercom_lead:
+        return intercom.leads.convert(intercom_lead, intercom_user)
+    else:
+        return None
