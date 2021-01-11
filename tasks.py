@@ -81,7 +81,7 @@ def intercom_update_firm(firm_id):
                          'nb_available_licenses': instance.available_licenses,
                          'last_amount_due': instance.get_last_amount_due(),
                          'is_subfirm': instance.parent_firm is not None,
-                         'is_yooz': instance.parent_firm and instance.parent_firm == 309,
+                         'is_yooz': instance.parent_firm and instance.parent_firm.id == 309,
                          'is_yooz_expert': instance.edition == 'expert',
                          'is_yooz_business': instance.edition == 'business',
                          'new_org_within_30_days': instance.organisation_set.filter(created__gte=datetime.now()-timedelta(30)).count()
