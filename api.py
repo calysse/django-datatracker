@@ -8,18 +8,18 @@ import datatracker.tasks as task_queue
 def track(user, name, properties, group=None, company=None, datetime=None, test_mode=False):
 
     if conf.DT_LOCAL_SAVE or test_mode:
-        model.Event.objects.add(user=user if isinstance(user, model.User) else None, name=name, group=group, properties=properties, datetime=datetime, company=company)
+        model.Event.objects.add(user=user, name=name, group=group, properties=properties, datetime=datetime, company=company)
         if test_mode:
             return
 
     if conf.DT_MIXPANEL_FORWARD:
-        task_queue.mp_track.delay(user, name, properties)
+        task_queue.mp_track.delay(user if isinstance(user, model.User) else None, name, properties)
     if conf.DT_INTERCOM_FORWARD:
         if conf.DEBUG:
             # task_queue.intercom_track(user, name, properties)
             pass
         else:
-            task_queue.intercom_track.delay(user, name, properties)
+            task_queue.intercom_track.delay(user if isinstance(user, model.User) else None, name, properties)
 
 
 def batch_track(events):
