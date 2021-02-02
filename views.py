@@ -77,7 +77,7 @@ def _pivot_metrics(metrics, formulas, sortby="0"):
 
 #
 # https://trampolinn.com/fr/datatrack/cohort/?main_metric=Member%20activity,,&trigger_metric=Member%20activity,,&name=User&granularity=month&nb_items=10
-#
+# https://ipaidthat.io/ima/cy/cohort/12/?tk={key}&Cy_Color=%234785E6
 def cohort(request):
     main_metric = request.GET.get('main_metric')
     trigger_metric = request.GET.get('trigger_metric')
