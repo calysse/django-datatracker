@@ -71,6 +71,17 @@ def intercom_update_firm(firm_id):
     from datetime import date, timedelta
     instance.set_date_range(date.today() - timedelta(90), date.today())
 
+    is_yooz = False
+    is_yooz_expert = False
+    is_yooz_business = False
+
+    if instance.parent_firm and instance.parent_firm.id == 309:
+        is_yooz = True
+        if instance.edition == 'expert':
+            is_yooz_expert = True
+        if instance.edition == 'business':
+            is_yooz_business = True
+
     custom_attributes = {'is_paid_account': instance.is_paid_account,
                          'nb_orgs': instance.nb_orgs,
                          'nb_active_orgs': instance.get_nb_active_orgs(),
@@ -81,9 +92,9 @@ def intercom_update_firm(firm_id):
                          'nb_available_licenses': instance.available_licenses,
                          'last_amount_due': instance.get_last_amount_due(),
                          'is_subfirm': instance.parent_firm is not None,
-                         'is_yooz': instance.parent_firm and instance.parent_firm.id == 309,
-                         'is_yooz_expert': instance.edition == 'expert',
-                         'is_yooz_business': instance.edition == 'business',
+                         'is_yooz': is_yooz,
+                         'is_yooz_expert': is_yooz_expert,
+                         'is_yooz_business': is_yooz_business,
                          'new_org_within_30_days': instance.organisation_set.filter(created__gte=datetime.now()-timedelta(30)).count()
                          }
 
