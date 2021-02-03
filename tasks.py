@@ -62,7 +62,7 @@ def call_and_retry(function, *args, **kwargs):
 
 
 @task
-def (firm_id):
+def intercom_update_firm(firm_id):
     # [Seb] Avril 2020 Sync firm and Sub-firms data to Intercom
     from ipt.models import Firm
     from datetime import timedelta, datetime
