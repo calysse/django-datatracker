@@ -175,6 +175,8 @@ def intercom_update_company(company_id):
                          'headquarter_address': instance.headquarter_address,
                          'main_activity': instance.main_activity,
 
+                         'onboarding_type': instance.onboarding_type,
+
                          # Init treso flags
                          'treso_trial_started': False,
                          'treso_last_seen': 0,
